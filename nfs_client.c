@@ -6,12 +6,16 @@
 
 #include "nfs.h"
 
+int* open(struct OpenRequest* request, CLIENT* clnt) {
+	int* result = ropen_1(request, clnt);
+	if (result == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
 
-void
-simple_nfs_1(char *host, CLIENT* clnt)
-{
-	int  *result_1;
-	struct OpenRequest  ropen_1_arg;
+	return result;
+}
+
+void simple_nfs_1(CLIENT* clnt) {
 	int  *result_2;
 	struct CreatRequest  rcreat_1_arg;
 	struct ReadResponse  *result_3;
@@ -19,10 +23,6 @@ simple_nfs_1(char *host, CLIENT* clnt)
 	int  *result_4;
 	struct FileAccessRequest  rwrite_1_arg;
 
-	result_1 = ropen_1(&ropen_1_arg, clnt);
-	if (result_1 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
 	result_2 = rcreat_1(&rcreat_1_arg, clnt);
 	if (result_2 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
@@ -38,9 +38,7 @@ simple_nfs_1(char *host, CLIENT* clnt)
 }
 
 
-int
-main (int argc, char *argv[])
-{
+int main (int argc, char *argv[]) {
 	char *host;
 
 	if (argc < 2) {
@@ -56,7 +54,7 @@ main (int argc, char *argv[])
 		exit (1);
 	}
 
-	simple_nfs_1 (host, clnt);
+	simple_nfs_1 (clnt);
 
 	clnt_destroy (clnt);
 	exit (0);
