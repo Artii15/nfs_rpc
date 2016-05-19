@@ -11,8 +11,8 @@ struct CreatRequest {
 
 struct FileAccessRequest {
 	char* fileName; 
-	off_t offset; 
-	size_t count;
+	int offset; 
+	unsigned count;
 };
 
 struct ReadResponse {
@@ -25,6 +25,6 @@ program SIMPLE_NFS {
 		int rOpen(struct OpenRequest) = 1;
 		int rCreat(struct CreatRequest) = 2;
 		struct ReadResponse rRead(struct FileAccessRequest) = 3;
-		ssize_t rWrite(struct FileAccessRequest) = 4;
+		int rWrite(struct FileAccessRequest) = 4;
 	} = 1;
 } = 0x20000001;

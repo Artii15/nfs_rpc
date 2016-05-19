@@ -8,25 +8,16 @@
 
 
 void
-simple_nfs_1(char *host)
+simple_nfs_1(char *host, CLIENT* clnt)
 {
-	CLIENT *clnt;
 	int  *result_1;
 	struct OpenRequest  ropen_1_arg;
 	int  *result_2;
 	struct CreatRequest  rcreat_1_arg;
 	struct ReadResponse  *result_3;
 	struct FileAccessRequest  rread_1_arg;
-	ssize_t  *result_4;
+	int  *result_4;
 	struct FileAccessRequest  rwrite_1_arg;
-
-#ifndef	DEBUG
-	clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
-	if (clnt == NULL) {
-		clnt_pcreateerror (host);
-		exit (1);
-	}
-#endif	/* DEBUG */
 
 	result_1 = ropen_1(&ropen_1_arg, clnt);
 	if (result_1 == (int *) NULL) {
@@ -41,12 +32,9 @@ simple_nfs_1(char *host)
 		clnt_perror (clnt, "call failed");
 	}
 	result_4 = rwrite_1(&rwrite_1_arg, clnt);
-	if (result_4 == (ssize_t *) NULL) {
+	if (result_4 == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-#ifndef	DEBUG
-	clnt_destroy (clnt);
-#endif	 /* DEBUG */
 }
 
 
@@ -60,6 +48,16 @@ main (int argc, char *argv[])
 		exit (1);
 	}
 	host = argv[1];
-	simple_nfs_1 (host);
-exit (0);
+
+
+	CLIENT *clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+	}
+
+	simple_nfs_1 (host, clnt);
+
+	clnt_destroy (clnt);
+	exit (0);
 }

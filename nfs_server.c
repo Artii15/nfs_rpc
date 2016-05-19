@@ -42,10 +42,10 @@ rread_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
 	return &result;
 }
 
-ssize_t *
+int *
 rwrite_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
 {
-	static ssize_t  result;
+	static int  result;
 
 	/*
 	 * insert server code here
