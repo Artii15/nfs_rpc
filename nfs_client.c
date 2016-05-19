@@ -6,7 +6,9 @@
 
 #include "nfs.h"
 
-int* open(struct OpenRequest* request, CLIENT* clnt) {
+static CLIENT* clnt;
+
+int* _open(struct OpenRequest* request) {
 	int* result = ropen_1(request, clnt);
 	if (result == (int *) NULL) {
 		clnt_perror (clnt, "call failed");
@@ -15,28 +17,31 @@ int* open(struct OpenRequest* request, CLIENT* clnt) {
 	return result;
 }
 
-void simple_nfs_1(CLIENT* clnt) {
-	int  *result_2;
-	struct CreatRequest  rcreat_1_arg;
-	struct ReadResponse  *result_3;
-	struct FileAccessRequest  rread_1_arg;
-	int  *result_4;
-	struct FileAccessRequest  rwrite_1_arg;
+int* _creat(struct CreatRequest* request) {
+	int* result = rcreat_1(request, clnt);
+	if (result == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
 
-	result_2 = rcreat_1(&rcreat_1_arg, clnt);
-	if (result_2 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = rread_1(&rread_1_arg, clnt);
-	if (result_3 == (struct ReadResponse *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_4 = rwrite_1(&rwrite_1_arg, clnt);
-	if (result_4 == (int *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
+	return result;
 }
 
+struct ReadResponse* _read(struct FileAccessRequest* request) {
+	struct ReadResponse* result = rread_1(request, clnt);
+	if (result == (struct ReadResponse *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+
+	return result;
+}
+
+int* _write(struct FileAccessRequest* request) {
+	int* result = rwrite_1(request, clnt);
+	if (result == (int *) NULL) {
+		clnt_perror (clnt, "call failed");
+	}
+	return result;
+}
 
 int main (int argc, char *argv[]) {
 	char *host;
@@ -48,13 +53,11 @@ int main (int argc, char *argv[]) {
 	host = argv[1];
 
 
-	CLIENT *clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
+	clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
 	if (clnt == NULL) {
 		clnt_pcreateerror (host);
 		exit (1);
 	}
-
-	simple_nfs_1 (clnt);
 
 	clnt_destroy (clnt);
 	exit (0);
