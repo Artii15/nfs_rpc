@@ -1,4 +1,5 @@
 #include "descriptors.h"
+#include <stdlib.h>
 
 #define MAX_FILENAME_LEN 255
 #define DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE 100
@@ -38,6 +39,9 @@ int useNextDescriptor() {
 }
 
 int allocateNewDescriptor() {
+	if(descriptorsPool == 0) {
+		descriptorsPool = calloc(DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE, sizeof(struct FileDescriptor));
+	}
 	return 0;
 }
 
