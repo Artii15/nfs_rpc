@@ -108,6 +108,7 @@ int reuseOldDescriptor() {
 void useDescriptor(int descriptorIdx) {
 	setDescriptorToZero(descriptorIdx);
 	descriptorsPool[descriptorIdx].inUse = 1;
+	descriptorsPool[descriptorIdx].seekPos = 0;
 }
 
 void setDescriptorToZero(int descriptorIdx) {
