@@ -75,14 +75,14 @@ void resizeDescriptorsPool() {
 }
 
 int reuseOldDescriptor() {
-	int descriptorIdx = freedDescriptorsIds->idx;
-	initializeDescriptor(descriptorIdx);
+	int descriptorToUseIdx = freedDescriptorsIds->idx;
+	initializeDescriptor(descriptorToUseIdx);
 
 	struct DescriptorIdx* freedDescriptorsListElementToRemove = freedDescriptorsIds;
 	freedDescriptorsIds = freedDescriptorsIds->next;
 	free(freedDescriptorsListElementToRemove);
 
-	return descriptorIdx;
+	return descriptorToUseIdx;
 }
 
 void initializeDescriptor(int descriptorIdx) {
