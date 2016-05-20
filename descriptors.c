@@ -25,28 +25,34 @@ int useNextDescriptor();
 int allocateNewDescriptor();
 int reuseOldDescriptor();
 void initializeDescriptor(int descriptorIdx);
+int isThereAnyDescriptorToReuse();
+int isDescriptorsPoolCreated();
+void createDescriptorsPool();
+void resizeDescriptorsPool();
 
 int open(const char *pathname, int flags, mode_t mode) {
 	return useNextDescriptor();
 }
 
 int useNextDescriptor() {
-	if(freedDescriptorsIds == 0) {
-		return allocateNewDescriptor();
+	if(isThereAnyDescriptorToReuse()) {
+		return reuseOldDescriptor();
 	}
 	else {
-		return reuseOldDescriptor();
+		return allocateNewDescriptor();
 	}
 }
 
+int isThereAnyDescriptorToReuse() {
+	return freedDescriptorsIds != 0;
+}
+
 int allocateNewDescriptor() {
-	if(descriptorsPool == 0) {
-		currentPoolSize = DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
-		descriptorsPool = calloc(currentPoolSize, sizeof(struct FileDescriptor));
+	if(!isDescriptorsPoolCreated()) {
+		createDescriptorsPool();
 	}
 	else if(nextDescriptorIdx >= currentPoolSize) {
-		currentPoolSize += DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
-		descriptorsPool = realloc(descriptorsPool, currentPoolSize*DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE);
+		resizeDescriptorsPool();
 	}
 
 	initializeDescriptor(nextDescriptorIdx);
@@ -54,9 +60,22 @@ int allocateNewDescriptor() {
 	return nextDescriptorIdx++;
 }
 
+int isDescriptorsPoolCreated() {
+	return descriptorsPool != 0;
+}
+
+void createDescriptorsPool() {
+	currentPoolSize = DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
+	descriptorsPool = calloc(currentPoolSize, sizeof(struct FileDescriptor));
+}
+
+void resizeDescriptorsPool() {
+	currentPoolSize += DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
+	descriptorsPool = realloc(descriptorsPool, currentPoolSize*DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE);
+}
+
 int reuseOldDescriptor() {
-	int nextDescriptorIdx = freedDescriptorsIds->idx;
-	initializeDescriptor(nextDescriptorIdx);
+	initializeDescriptor(freedDescriptorsIds->idx);
 
 	freedDescriptorsIds = freedDescriptorsIds->next;
 
