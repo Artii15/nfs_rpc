@@ -32,6 +32,7 @@ int isThereAnyDescriptorToReuse();
 int isDescriptorsPoolCreated();
 void createDescriptorsPool();
 void resizeDescriptorsPool();
+void clean();
 
 int reserveDescriptor(const char *pathname, int flags, mode_t mode) {
 	int fd = useNextDescriptor();
@@ -76,6 +77,7 @@ int isThereAnyDescriptorToReuse() {
 int allocateNewDescriptor() {
 	if(!isDescriptorsPoolCreated()) {
 		createDescriptorsPool();
+		atexit(clean);
 	}
 	else if(nextDescriptorIdx >= currentPoolSize) {
 		resizeDescriptorsPool();
@@ -118,4 +120,16 @@ void useDescriptor(int descriptorIdx) {
 
 void setDescriptorToZero(int descriptorIdx) {
 	memset(&descriptorsPool[descriptorIdx], 0, sizeof(struct FileDescriptor));
+}
+
+void clean() {
+	if(isDescriptorsPoolCreated()) {
+		free(descriptorsPool);
+	}
+
+	while(isThereAnyDescriptorToReuse()) {
+		struct DescriptorIdx* nextDescriptor = freedDescriptorsIds->next;
+		free(freedDescriptorsIds);
+		freedDescriptorsIds = nextDescriptor;
+	}
 }
