@@ -1,6 +1,7 @@
 #include "descriptors.h"
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #define MAX_FILENAME_LEN 255
 #define DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE 100
@@ -32,6 +33,20 @@ void resizeDescriptorsPool();
 
 int open(const char *pathname, int flags, mode_t mode) {
 	return useNextDescriptor();
+}
+
+int close(int fd) {
+	if(fd < 0 || fd >= currentPoolSize /* || isFree(fd) */) {
+		errno = EBADF;
+		return -1;
+	}
+
+	struct DescriptorIdx* freedDescriptorIdx = calloc(1, sizeof(struct DescriptorIdx));
+	freedDescriptorIdx->idx = fd;
+	freedDescriptorIdx->next = freedDescriptorsIds;
+	freedDescriptorsIds = freedDescriptorIdx;
+
+	return 0;
 }
 
 int useNextDescriptor() {
