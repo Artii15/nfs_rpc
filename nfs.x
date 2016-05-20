@@ -23,12 +23,12 @@ struct OperationStatus {
 struct ReadResponse {
 	int bytesRead;
 	opaque content<100>;
-	struct OperationStatus;
+	struct OperationStatus status;
 };
 
 struct WriteResponse {
 	int bytesWritten;
-	struct OperationStatus;
+	struct OperationStatus status;
 };
 
 program SIMPLE_NFS {
