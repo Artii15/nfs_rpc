@@ -3,15 +3,7 @@
 #include <string.h>
 #include <errno.h>
 
-#define MAX_FILENAME_LEN 255
 #define DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE 100
-
-struct FileDescriptor {
-	char fileName[MAX_FILENAME_LEN];
-	int flags;
-	mode_t mode;
-	int inUse;
-};
 
 struct DescriptorIdx {
 	int idx;
@@ -132,4 +124,8 @@ void clean() {
 		free(freedDescriptorsIds);
 		freedDescriptorsIds = nextDescriptor;
 	}
+}
+
+struct FileDescriptor* getDescriptor(int fd) {
+	return &descriptorsPool[fd];
 }
