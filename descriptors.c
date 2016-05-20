@@ -3,10 +3,11 @@
 #include <string.h>
 #include <errno.h>
 
+#define MAX_FILENAME_LEN 255
 #define DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE 100
 
 struct FileDescriptor {
-	char* fileName;
+	char fileName[MAX_FILENAME_LEN];
 	int flags;
 	mode_t mode;
 	int inUse;
@@ -36,7 +37,7 @@ int open(const char *pathname, int flags, mode_t mode) {
 	int fd = useNextDescriptor();
 
 	struct FileDescriptor* descriptor = &descriptorsPool[fd];
-	descriptor->fileName = pathname;
+	strncpy(descriptor->fileName, pathname, MAX_FILENAME_LEN - 1);
 	descriptor->flags = flags;
 	descriptor->mode = mode;
 
