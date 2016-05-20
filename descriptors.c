@@ -24,6 +24,7 @@ static struct DescriptorIdx* freedDescriptorsIds = 0;
 int useNextDescriptor();
 int allocateNewDescriptor();
 int reuseOldDescriptor();
+void initializeDescriptor(int descriptorIdx);
 
 int open(const char *pathname, int flags, mode_t mode) {
 	return useNextDescriptor();
@@ -48,16 +49,20 @@ int allocateNewDescriptor() {
 		descriptorsPool = realloc(descriptorsPool, currentPoolSize*DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE);
 	}
 
-	memset(&descriptorsPool[nextDescriptorIdx], 0, sizeof(struct FileDescriptor));
+	initializeDescriptor(nextDescriptorIdx);
 
 	return nextDescriptorIdx++;
 }
 
 int reuseOldDescriptor() {
 	int nextDescriptorIdx = freedDescriptorsIds->idx;
-	memset(&descriptorsPool[nextDescriptorIdx], 0, sizeof(struct FileDescriptor));
+	initializeDescriptor(nextDescriptorIdx);
 
 	freedDescriptorsIds = freedDescriptorsIds->next;
 
 	return nextDescriptorIdx;
+}
+
+void initializeDescriptor(int descriptorIdx) {
+	memset(&descriptorsPool[descriptorIdx], 0, sizeof(struct FileDescriptor));
 }
