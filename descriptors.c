@@ -54,5 +54,10 @@ int allocateNewDescriptor() {
 }
 
 int reuseOldDescriptor() {
-	return 0;
+	int nextDescriptorIdx = freedDescriptorsIds->idx;
+	memset(&descriptorsPool[nextDescriptorIdx], 0, sizeof(struct FileDescriptor));
+
+	freedDescriptorsIds = freedDescriptorsIds->next;
+
+	return nextDescriptorIdx;
 }
