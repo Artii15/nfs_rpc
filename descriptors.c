@@ -45,7 +45,7 @@ int reserveDescriptor(const char *pathname, int flags, mode_t mode) {
 	return fd;
 }
 
-int returnDescriptor(int fd) {
+int releaseDescriptor(int fd) {
 	if(fd < 0 || fd >= currentPoolSize || descriptorsPool[fd].inUse == 0) {
 		errno = EBADF;
 		return -1;
