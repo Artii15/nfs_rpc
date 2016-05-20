@@ -3,6 +3,7 @@
 
 typedef unsigned mode_t;
 
-int open(const char *pathname, int flags, mode_t mode);
+int reserveDescriptor(const char *pathname, int flags, mode_t mode);
+int returnDescriptor(int fd);
 
 #endif

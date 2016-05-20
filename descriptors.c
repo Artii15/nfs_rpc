@@ -33,7 +33,7 @@ int isDescriptorsPoolCreated();
 void createDescriptorsPool();
 void resizeDescriptorsPool();
 
-int open(const char *pathname, int flags, mode_t mode) {
+int reserveDescriptor(const char *pathname, int flags, mode_t mode) {
 	int fd = useNextDescriptor();
 
 	struct FileDescriptor* descriptor = &descriptorsPool[fd];
@@ -44,7 +44,7 @@ int open(const char *pathname, int flags, mode_t mode) {
 	return fd;
 }
 
-int close(int fd) {
+int returnDescriptor(int fd) {
 	if(fd < 0 || fd >= currentPoolSize || descriptorsPool[fd].inUse == 0) {
 		errno = EBADF;
 		return -1;
