@@ -6,8 +6,8 @@
 CLIENT = nfs_client
 SERVER = nfs_server
 
-SOURCES_CLNT.c = 
-SOURCES_CLNT.h = 
+SOURCES_CLNT.c = descriptors.c
+SOURCES_CLNT.h = descriptors.h
 SOURCES_SVC.c = 
 SOURCES_SVC.h = 
 SOURCES.x = nfs.x

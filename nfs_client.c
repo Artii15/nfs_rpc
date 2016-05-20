@@ -5,6 +5,7 @@
  */
 
 #include "nfs.h"
+#include "descriptors.h"
 
 static CLIENT* clnt;
 
@@ -51,7 +52,6 @@ int main (int argc, char *argv[]) {
 		exit (1);
 	}
 	host = argv[1];
-
 
 	clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
 	if (clnt == NULL) {
