@@ -15,16 +15,27 @@ struct FileAccessRequest {
 	unsigned count;
 };
 
+struct OperationStatus {
+	int returnValue;
+	int errno;
+};
+
 struct ReadResponse {
 	int bytesRead;
 	opaque content<100>;
+	struct OperationStatus;
+};
+
+struct WriteResponse {
+	int bytesWritten;
+	struct OperationStatus;
 };
 
 program SIMPLE_NFS {
 	version DEFAULT_SIGNUM {
-		int rOpen(struct OpenRequest) = 1;
-		int rCreat(struct CreatRequest) = 2;
+		struct OperationStatus rOpen(struct OpenRequest) = 1;
+		struct OperationStatus rCreat(struct CreatRequest) = 2;
 		struct ReadResponse rRead(struct FileAccessRequest) = 3;
-		int rWrite(struct FileAccessRequest) = 4;
+		struct WriteResponse rWrite(struct FileAccessRequest) = 4;
 	} = 1;
 } = 0x20000001;
