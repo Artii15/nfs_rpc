@@ -2,7 +2,6 @@
 #define CLIENT_INTERFACE_H
 
 #include "descriptors.h"
-#include <sys/types.h>
 
 int open(const char *pathname, int flags, mode_t mode);
 int creat(const char *pathname, mode_t mode);
