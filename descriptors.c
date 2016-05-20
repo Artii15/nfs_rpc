@@ -1,5 +1,6 @@
 #include "descriptors.h"
 #include <stdlib.h>
+#include <string.h>
 
 #define MAX_FILENAME_LEN 255
 #define DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE 100
@@ -46,7 +47,10 @@ int allocateNewDescriptor() {
 		currentPoolSize += DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
 		descriptorsPool = realloc(descriptorsPool, currentPoolSize*DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE);
 	}
-	return 0;
+
+	memset(&descriptorsPool[nextDescriptorIdx], 0, sizeof(struct FileDescriptor));
+
+	return nextDescriptorIdx++;
 }
 
 int reuseOldDescriptor() {
