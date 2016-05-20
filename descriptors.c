@@ -10,6 +10,7 @@ struct FileDescriptor {
 	char* fileName;
 	int flags;
 	mode_t mode;
+	int inUse;
 };
 
 struct DescriptorIdx {
@@ -25,7 +26,8 @@ static struct DescriptorIdx* freedDescriptorsIds = 0;
 int useNextDescriptor();
 int allocateNewDescriptor();
 int reuseOldDescriptor();
-void initializeDescriptor(int descriptorIdx);
+void setDescriptorToZero(int descriptorIdx);
+void useDescriptor(int descriptorIdx);
 int isThereAnyDescriptorToReuse();
 int isDescriptorsPoolCreated();
 void createDescriptorsPool();
@@ -36,7 +38,7 @@ int open(const char *pathname, int flags, mode_t mode) {
 }
 
 int close(int fd) {
-	if(fd < 0 || fd >= currentPoolSize /* || isFree(fd) */) {
+	if(fd < 0 || fd >= currentPoolSize || descriptorsPool[fd].inUse == 0) {
 		errno = EBADF;
 		return -1;
 	}
@@ -45,6 +47,8 @@ int close(int fd) {
 	freedDescriptorIdx->idx = fd;
 	freedDescriptorIdx->next = freedDescriptorsIds;
 	freedDescriptorsIds = freedDescriptorIdx;
+
+	setDescriptorToZero(fd);
 
 	return 0;
 }
@@ -70,7 +74,7 @@ int allocateNewDescriptor() {
 		resizeDescriptorsPool();
 	}
 
-	initializeDescriptor(nextDescriptorIdx);
+	useDescriptor(nextDescriptorIdx);
 
 	return nextDescriptorIdx++;
 }
@@ -91,7 +95,7 @@ void resizeDescriptorsPool() {
 
 int reuseOldDescriptor() {
 	int descriptorToUseIdx = freedDescriptorsIds->idx;
-	initializeDescriptor(descriptorToUseIdx);
+	useDescriptor(descriptorToUseIdx);
 
 	struct DescriptorIdx* freedDescriptorsListElementToRemove = freedDescriptorsIds;
 	freedDescriptorsIds = freedDescriptorsIds->next;
@@ -100,6 +104,11 @@ int reuseOldDescriptor() {
 	return descriptorToUseIdx;
 }
 
-void initializeDescriptor(int descriptorIdx) {
+void useDescriptor(int descriptorIdx) {
+	setDescriptorToZero(descriptorIdx);
+	descriptorsPool[descriptorIdx].inUse = 1;
+}
+
+void setDescriptorToZero(int descriptorIdx) {
 	memset(&descriptorsPool[descriptorIdx], 0, sizeof(struct FileDescriptor));
 }
