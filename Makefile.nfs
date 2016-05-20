@@ -6,8 +6,8 @@
 CLIENT = nfs_client
 SERVER = nfs_server
 
-SOURCES_CLNT.c = descriptors.c client_interface.h
-SOURCES_CLNT.h = descriptors.h client_interface.c
+SOURCES_CLNT.c = descriptors.c client_interface.c
+SOURCES_CLNT.h = descriptors.h client_interface.h
 SOURCES_SVC.c = 
 SOURCES_SVC.h = 
 SOURCES.x = nfs.x
@@ -20,7 +20,7 @@ OBJECTS_CLNT = $(SOURCES_CLNT.c:%.c=%.o) $(TARGETS_CLNT.c:%.c=%.o)
 OBJECTS_SVC = $(SOURCES_SVC.c:%.c=%.o) $(TARGETS_SVC.c:%.c=%.o)
 # Compiler flags 
 
-CFLAGS += -g -Wall
+CFLAGS += -g 
 LDLIBS += -lnsl
 RPCGENFLAGS = 
 

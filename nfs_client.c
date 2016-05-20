@@ -5,46 +5,54 @@
  */
 
 #include "nfs.h"
-#include "descriptors.h"
 
-static CLIENT* clnt;
 
-int* _open(struct OpenRequest* request) {
-	int* result = ropen_1(request, clnt);
-	if (result == (int *) NULL) {
+void
+simple_nfs_1(char *host)
+{
+	CLIENT *clnt;
+	struct OperationStatus  *result_1;
+	struct OpenRequest  ropen_1_arg;
+	struct OperationStatus  *result_2;
+	struct CreatRequest  rcreat_1_arg;
+	struct ReadResponse  *result_3;
+	struct FileAccessRequest  rread_1_arg;
+	struct WriteResponse  *result_4;
+	struct FileAccessRequest  rwrite_1_arg;
+
+#ifndef	DEBUG
+	clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
+	if (clnt == NULL) {
+		clnt_pcreateerror (host);
+		exit (1);
+	}
+#endif	/* DEBUG */
+
+	result_1 = ropen_1(&ropen_1_arg, clnt);
+	if (result_1 == (struct OperationStatus *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-
-	return result;
-}
-
-int* _creat(struct CreatRequest* request) {
-	int* result = rcreat_1(request, clnt);
-	if (result == (int *) NULL) {
+	result_2 = rcreat_1(&rcreat_1_arg, clnt);
+	if (result_2 == (struct OperationStatus *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-
-	return result;
-}
-
-struct ReadResponse* _read(struct FileAccessRequest* request) {
-	struct ReadResponse* result = rread_1(request, clnt);
-	if (result == (struct ReadResponse *) NULL) {
+	result_3 = rread_1(&rread_1_arg, clnt);
+	if (result_3 == (struct ReadResponse *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-
-	return result;
-}
-
-int* _write(struct FileAccessRequest* request) {
-	int* result = rwrite_1(request, clnt);
-	if (result == (int *) NULL) {
+	result_4 = rwrite_1(&rwrite_1_arg, clnt);
+	if (result_4 == (struct WriteResponse *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
-	return result;
+#ifndef	DEBUG
+	clnt_destroy (clnt);
+#endif	 /* DEBUG */
 }
 
-int main (int argc, char *argv[]) {
+
+int
+main (int argc, char *argv[])
+{
 	char *host;
 
 	if (argc < 2) {
@@ -52,13 +60,6 @@ int main (int argc, char *argv[]) {
 		exit (1);
 	}
 	host = argv[1];
-
-	clnt = clnt_create (host, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
-	if (clnt == NULL) {
-		clnt_pcreateerror (host);
-		exit (1);
-	}
-
-	clnt_destroy (clnt);
-	exit (0);
+	simple_nfs_1 (host);
+exit (0);
 }

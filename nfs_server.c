@@ -6,10 +6,10 @@
 
 #include "nfs.h"
 
-int *
+struct OperationStatus *
 ropen_1_svc(struct OpenRequest *argp, struct svc_req *rqstp)
 {
-	static int  result;
+	static struct OperationStatus  result;
 
 	/*
 	 * insert server code here
@@ -18,10 +18,10 @@ ropen_1_svc(struct OpenRequest *argp, struct svc_req *rqstp)
 	return &result;
 }
 
-int *
+struct OperationStatus *
 rcreat_1_svc(struct CreatRequest *argp, struct svc_req *rqstp)
 {
-	static int  result;
+	static struct OperationStatus  result;
 
 	/*
 	 * insert server code here
@@ -42,10 +42,10 @@ rread_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
 	return &result;
 }
 
-int *
+struct WriteResponse *
 rwrite_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
 {
-	static int  result;
+	static struct WriteResponse  result;
 
 	/*
 	 * insert server code here
