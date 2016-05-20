@@ -1,6 +1,16 @@
 #include "client_interface.h"
+#include "nfs.h"
+#include "descriptors.h"
 
 int open(const char *pathname, int flags, mode_t mode) {
+	char fileNameBuf[MAX_FILENAME_LEN];
+	strncpy(fileNameBuf, pathname, MAX_FILENAME_LEN - 1);
+
+	struct OpenRequest openRequest;
+	openRequest.fileName = fileNameBuf;
+	openRequest.flags = flags;
+	openRequest.mode = mode;
+
 	return 0;
 }
 
