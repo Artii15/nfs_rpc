@@ -17,7 +17,6 @@ struct DescriptorIdx {
 
 static struct FileDescriptor* descriptorsPool = 0;
 static int currentPoolSize = 0;
-static int currentPoolSizeLimit = 0;
 static int nextDescriptorIdx = 0;
 static struct DescriptorIdx* freedDescriptorsIds = 0;
 
@@ -40,7 +39,12 @@ int useNextDescriptor() {
 
 int allocateNewDescriptor() {
 	if(descriptorsPool == 0) {
-		descriptorsPool = calloc(DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE, sizeof(struct FileDescriptor));
+		currentPoolSize = DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
+		descriptorsPool = calloc(currentPoolSize, sizeof(struct FileDescriptor));
+	}
+	else if(nextDescriptorIdx >= currentPoolSize) {
+		currentPoolSize += DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE;
+		descriptorsPool = realloc(descriptorsPool, currentPoolSize*DESCRIPTORS_POOL_SIZE_INCREMENT_VALUE);
 	}
 	return 0;
 }
