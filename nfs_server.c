@@ -32,6 +32,7 @@ struct OperationStatus* rcreat_1_svc(struct CreatRequest *argp, struct svc_req *
 	return &result;
 }
 
+void cleanReadBuffer();
 static short readBufferSize = 0;
 static struct ReadResponse readResponse = {.content = {.content_val = 0, .content_len = 0}, .status = {.returnValue = 0, .error = 0}};
 struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp) {
@@ -48,7 +49,13 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 	lseek(fd, request->offset, SEEK_SET);
 
 	if(readBufferSize < request->count*sizeof(char)) {
-		readResponse.content.content_val = (readBufferSize == 0) ? malloc(request->count*sizeof(char)) : realloc(readResponse.content.content_val, request->count*sizeof(char));
+		if(readBufferSize == 0) {
+			readResponse.content.content_val = malloc(request->count*sizeof(char));
+			atexit(cleanReadBuffer);
+		}
+		else {
+			readResponse.content.content_val = realloc(readResponse.content.content_val, request->count*sizeof(char));
+		}
 		readBufferSize = request->count;
 	}
 	memset(readResponse.content.content_val, 0, readBufferSize);
@@ -65,6 +72,10 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 	close(fd);
 
 	return &readResponse;
+}
+
+void cleanReadBuffer() {
+	free(readResponse.content.content_val);
 }
 
 struct WriteResponse* rwrite_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
