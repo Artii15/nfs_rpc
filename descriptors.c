@@ -55,7 +55,7 @@ int releaseDescriptor(int fd) {
 }
 
 int isDescriptorInUse(int fd) {
-	return fd < 0 || fd >= currentPoolSize || descriptorsPool[fd].inUse == 0;
+	return fd >= 0 && fd < currentPoolSize && descriptorsPool[fd].inUse == 1;
 }
 
 int useNextDescriptor() {

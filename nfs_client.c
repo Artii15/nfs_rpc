@@ -16,6 +16,13 @@ int main (int argc, char *argv[]) {
 
 	printf("%d\n", fd);
 
+	char readBuf[100] = {0};
+	int bytesRead = read(fd, readBuf, 99);
+
+	printf("%d %s", bytesRead, readBuf);
+
+	perror("error");
+
 	clientFinish();
 	exit(0);
 }
