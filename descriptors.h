@@ -4,6 +4,7 @@
 #define MAX_FILENAME_LEN 255
 
 #include <sys/types.h>
+#include <asm/fcntl.h>
 
 struct FileDescriptor {
 	char fileName[MAX_FILENAME_LEN];
