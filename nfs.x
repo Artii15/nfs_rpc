@@ -1,11 +1,11 @@
 struct OpenRequest {
-	char* fileName;
+	string fileName<>;
 	int flags;
 	unsigned mode;
 };
 
 struct CreatRequest {
-	char* fileName;
+	string fileName<>;
 	unsigned mode;
 };
 
@@ -21,7 +21,7 @@ struct OperationStatus {
 };
 
 struct ReadResponse {
-	char* content;
+	opaque content<>;
 	struct OperationStatus status;
 };
 
