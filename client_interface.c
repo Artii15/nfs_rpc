@@ -80,6 +80,12 @@ ssize_t read(int fd, void *buf, size_t count) {
 
 	struct ReadResponse* response = rread_1(&request, clnt);
 
+	if(response == NULL) {
+		clnt_perror(clnt, "call failed");
+		errno = EIO;
+		return -1;
+	}
+
 	int bytesRead = response->status.returnValue;
 	if(bytesRead < 0) {
 		errno = response->status.error;
