@@ -11,7 +11,7 @@ int main (int argc, char *argv[]) {
 	char* serverName = argv[1];
 	clientInit(serverName);
 
-	int fd = open("/home/artur/pgadmin.log", O_RDONLY, 0);
+	int fd = open("/home/artur/test.txt", O_RDONLY, 0);
 	close(fd);
 
 	printf("%d\n", fd);
@@ -19,9 +19,11 @@ int main (int argc, char *argv[]) {
 	char readBuf[100] = {0};
 	int bytesRead = read(fd, readBuf, 99);
 
-	printf("%d %s", bytesRead, readBuf);
+	printf("%d %s\n", bytesRead, readBuf);
 
-	perror("error");
+	if(bytesRead < 0) {
+		perror("error");
+	}
 
 	clientFinish();
 	exit(0);
