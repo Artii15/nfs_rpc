@@ -75,8 +75,6 @@ ssize_t read(int fd, void *buf, size_t count) {
 		return -1;
 	}
 
-	printf("%s\n", fileDescriptor->fileName);
-
 	struct FileAccessRequest request = {.offset = fileDescriptor->seekPos, .count = count, 
 			.fileAttributes = {.fileName = fileDescriptor->fileName, .flags = fileDescriptor->flags, .mode = fileDescriptor->mode}};
 

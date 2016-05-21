@@ -33,39 +33,38 @@ struct OperationStatus* rcreat_1_svc(struct CreatRequest *argp, struct svc_req *
 }
 
 static short readBufferSize = 0;
-struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp)
-{
-	static struct ReadResponse result;
+static struct ReadResponse readResponse = {.content = {.content_val = 0, .content_len = 0}, .status = {.returnValue = 0, .error = 0}};
+struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp) {
 	int fd = open(request->fileAttributes.fileName, request->fileAttributes.flags);
 
 	if(fd < 0) {
-		result.content.content_len = 0;
-		result.status.returnValue = fd;
-		result.status.error = errno;
+		readResponse.content.content_len = 0;
+		readResponse.status.returnValue = fd;
+		readResponse.status.error = errno;
 
-		return &result;
+		return &readResponse;
 	}
 
 	lseek(fd, request->offset, SEEK_SET);
 
 	if(readBufferSize < request->count*sizeof(char)) {
-		result.content.content_val = (readBufferSize == 0) ? malloc(request->count*sizeof(char)) : realloc(result.content.content_val, request->count*sizeof(char));
+		readResponse.content.content_val = (readBufferSize == 0) ? malloc(request->count*sizeof(char)) : realloc(readResponse.content.content_val, request->count*sizeof(char));
 		readBufferSize = request->count;
 	}
-	memset(result.content.content_val, 0, readBufferSize);
+	memset(readResponse.content.content_val, 0, readBufferSize);
 
-	result.status.returnValue = read(fd, result.content.content_val, request->count);
-	if(result.status.returnValue > 0) {
-		result.content.content_len = result.status.returnValue;
+	readResponse.status.returnValue = read(fd, readResponse.content.content_val, request->count);
+	if(readResponse.status.returnValue > 0) {
+		readResponse.content.content_len = readResponse.status.returnValue;
 	}
 	else {
-		result.status.error = errno;
-		result.content.content_len = 0;
+		readResponse.status.error = errno;
+		readResponse.content.content_len = 0;
 	}
 
 	close(fd);
 
-	return &result;
+	return &readResponse;
 }
 
 struct WriteResponse* rwrite_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
