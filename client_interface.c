@@ -40,8 +40,12 @@ void clientFinish() {
 }
 
 int open(const char *pathname, int flags, mode_t mode) {
+	if(strnlen(pathname, MAX_FILENAME_LEN) >= MAX_FILENAME_LEN) {
+		errno = ENAMETOOLONG;	
+		return -1;
+	}
 	char fileNameBuf[MAX_FILENAME_LEN];
-	strncpy(fileNameBuf, pathname, MAX_FILENAME_LEN - 1);
+	strcpy(fileNameBuf, pathname);
 
 	struct OpenRequest openRequest = {.fileName = fileNameBuf, .flags = flags, .mode = mode};
 
@@ -66,6 +70,7 @@ int creat(const char *pathname, mode_t mode) {
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
+	struct FileDescriptor* fileDescriptor = getDescriptor(fd);
 	return 0;
 }
 
