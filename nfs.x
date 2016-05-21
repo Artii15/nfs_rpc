@@ -21,7 +21,6 @@ struct OperationStatus {
 };
 
 struct ReadResponse {
-	int bytesRead;
 	opaque content<100>;
 	struct OperationStatus status;
 };

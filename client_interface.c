@@ -77,6 +77,19 @@ ssize_t read(int fd, void *buf, size_t count) {
 
 	struct FileAccessRequest request = {.offset = fileDescriptor->seekPos, .count = count, 
 			.fileAttributes = {.fileName = fileDescriptor->fileName, .flags = fileDescriptor->flags, .mode = fileDescriptor->mode}};
+
+	struct ReadResponse* response = rread_1(&request, clnt);
+
+	int bytesRead = response->status.returnValue;
+	if(bytesRead < 0) {
+		errno = response->status.error;
+	}
+	else {
+		fileDescriptor->seekPos += bytesRead;
+		memcpy(buf, response->content.content_val, bytesRead);
+	}
+
+	return bytesRead;
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
