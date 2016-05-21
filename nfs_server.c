@@ -35,6 +35,26 @@ struct OperationStatus* rcreat_1_svc(struct CreatRequest *argp, struct svc_req *
 struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp)
 {
 	static struct ReadResponse result;
+	int fd = open(request->fileAttributes.fileName, request->fileAttributes.flags, request->fileAttributes.mode);
+
+	if(fd < 0) {
+		result.content = 0;
+		result.status.returnValue = fd;
+		result.status.error = errno;
+
+		return &result;
+	}
+
+	lseek(fd, request->offset, SEEK_SET);
+
+	char buf[request->count];
+	memset(buf, 0, request->count);
+	result.content = buf;
+
+	result.status.returnValue = read(fd, result.content, request->count);
+	result.status.error = errno;
+
+	close(fd);
 
 	return &result;
 }

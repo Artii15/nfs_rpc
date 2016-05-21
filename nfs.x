@@ -21,7 +21,7 @@ struct OperationStatus {
 };
 
 struct ReadResponse {
-	opaque content<100>;
+	char* content;
 	struct OperationStatus status;
 };
 

@@ -92,7 +92,7 @@ ssize_t read(int fd, void *buf, size_t count) {
 	}
 	else {
 		fileDescriptor->seekPos += bytesRead;
-		memcpy(buf, response->content.content_val, bytesRead);
+		memcpy(buf, response->content, bytesRead);
 	}
 
 	return bytesRead;
