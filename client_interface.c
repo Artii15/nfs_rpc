@@ -1,6 +1,7 @@
 #include "client_interface.h"
 #include "nfs.h"
 #include "descriptors.h"
+#include <errno.h>
 
 static CLIENT* clnt = 0;
 
@@ -47,9 +48,17 @@ int open(const char *pathname, int flags, mode_t mode) {
 	struct OperationStatus* remoteOpenStatus = ropen_1(&openRequest, clnt);
 	if (remoteOpenStatus == (struct OperationStatus *) NULL) {
 		clnt_perror(clnt, "call failed");
-	}
+		errno = EACCES;
 
-	return remoteOpenStatus->returnValue;
+		return -1;
+	}
+	else if(remoteOpenStatus->returnValue < 0) {
+		errno = remoteOpenStatus->error;
+		return remoteOpenStatus->returnValue;
+	}
+	else {
+		return reserveDescriptor(pathname, flags, mode);
+	}
 }
 
 int creat(const char *pathname, mode_t mode) {
