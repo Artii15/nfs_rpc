@@ -49,7 +49,7 @@ int open(const char *pathname, int flags, mode_t mode) {
 		clnt_perror(clnt, "call failed");
 	}
 
-	return 0;
+	return remoteOpenStatus->returnValue;
 }
 
 int creat(const char *pathname, mode_t mode) {

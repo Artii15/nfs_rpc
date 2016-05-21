@@ -11,6 +11,7 @@ int main (int argc, char *argv[]) {
 	char* serverName = argv[1];
 	clientInit(serverName);
 
+	printf("%d\n", open("/home/artur/pgadmin.log", 0, 0));
 
 	clientFinish();
 	exit(0);

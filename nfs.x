@@ -17,7 +17,7 @@ struct FileAccessRequest {
 
 struct OperationStatus {
 	int returnValue;
-	int errno;
+	int error;
 };
 
 struct ReadResponse {
