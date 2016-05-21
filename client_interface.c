@@ -5,8 +5,6 @@
 static CLIENT* clnt = 0;
 
 /*
-	struct OperationStatus  *result_1;
-	struct OpenRequest  ropen_1_arg;
 	struct OperationStatus  *result_2;
 	struct CreatRequest  rcreat_1_arg;
 	struct ReadResponse  *result_3;
@@ -14,10 +12,6 @@ static CLIENT* clnt = 0;
 	struct WriteResponse  *result_4;
 	struct FileAccessRequest  rwrite_1_arg;
 
-	result_1 = ropen_1(&ropen_1_arg, clnt);
-	if (result_1 == (struct OperationStatus *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
 	result_2 = rcreat_1(&rcreat_1_arg, clnt);
 	if (result_2 == (struct OperationStatus *) NULL) {
 		clnt_perror (clnt, "call failed");
@@ -31,7 +25,6 @@ static CLIENT* clnt = 0;
 		clnt_perror (clnt, "call failed");
 	}
 */
-
 
 void clientInit(char* hostname) {
 	clnt = clnt_create(hostname, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
@@ -49,10 +42,12 @@ int open(const char *pathname, int flags, mode_t mode) {
 	char fileNameBuf[MAX_FILENAME_LEN];
 	strncpy(fileNameBuf, pathname, MAX_FILENAME_LEN - 1);
 
-	struct OpenRequest openRequest;
-	openRequest.fileName = fileNameBuf;
-	openRequest.flags = flags;
-	openRequest.mode = mode;
+	struct OpenRequest openRequest = {.fileName = fileNameBuf, .flags = flags, .mode = mode};
+
+	struct OperationStatus* remoteOpenStatus = ropen_1(&openRequest, clnt);
+	if (remoteOpenStatus == (struct OperationStatus *) NULL) {
+		clnt_perror(clnt, "call failed");
+	}
 
 	return 0;
 }
