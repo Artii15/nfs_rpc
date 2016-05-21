@@ -32,13 +32,9 @@ struct OperationStatus* rcreat_1_svc(struct CreatRequest *argp, struct svc_req *
 	return &result;
 }
 
-struct ReadResponse* rread_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
+struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp)
 {
-	static struct ReadResponse  result;
-
-	/*
-	 * insert server code here
-	 */
+	static struct ReadResponse result;
 
 	return &result;
 }

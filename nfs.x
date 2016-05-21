@@ -10,9 +10,9 @@ struct CreatRequest {
 };
 
 struct FileAccessRequest {
-	char* fileName; 
 	int offset; 
 	unsigned count;
+	struct OpenRequest fileAttributes;
 };
 
 struct OperationStatus {

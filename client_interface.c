@@ -71,7 +71,12 @@ int creat(const char *pathname, mode_t mode) {
 
 ssize_t read(int fd, void *buf, size_t count) {
 	struct FileDescriptor* fileDescriptor = getDescriptor(fd);
-	return 0;
+	if(fileDescriptor == 0) {
+		return -1;
+	}
+
+	struct FileAccessRequest request = {.offset = fileDescriptor->seekPos, .count = count, 
+			.fileAttributes = {.fileName = fileDescriptor->fileName, .flags = fileDescriptor->flags, .mode = fileDescriptor->mode}};
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
