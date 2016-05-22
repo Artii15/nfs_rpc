@@ -46,6 +46,7 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 		return &readResponse;
 	}
 
+	/* TODO: handling lseek error */
 	lseek(fd, request->offset, SEEK_SET);
 
 	if(readBufferSize < request->count*sizeof(char)) {
@@ -89,10 +90,11 @@ struct OperationStatus* rwrite_1_svc(struct WriteRequest *request, struct svc_re
 		return &result;
 	}
 
+	/* TODO: handling lseek error */
 	lseek(fd, request->requestAttributes.offset, SEEK_SET);
 
 	result.returnValue = write(fd, request->content.content_val, request->requestAttributes.count);
-	result.error = errno;
+	result.error = (result.returnValue < 0) ? errno : 0;
 
 	close(fd);
 
