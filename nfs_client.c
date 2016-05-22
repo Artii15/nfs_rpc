@@ -11,7 +11,14 @@ int main (int argc, char *argv[]) {
 	char* serverName = argv[1];
 	clientInit(serverName);
 
-	int fd = open("/home/artur/test.txt", O_RDONLY, 0);
+	int fd = open("/home/artur/test.txt", O_RDWR, 0);
+
+	char writeBuf[] = {'a', 'b', 'c'};
+	if(write(fd, writeBuf, 3) < 0) {
+		perror("Error");
+		close(fd);
+		exit(1);	
+	}
 
 	printf("%d\n", fd);
 
