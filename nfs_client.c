@@ -12,7 +12,6 @@ int main (int argc, char *argv[]) {
 	clientInit(serverName);
 
 	int fd = open("/home/artur/test.txt", O_RDONLY, 0);
-	close(fd);
 
 	printf("%d\n", fd);
 
@@ -24,6 +23,8 @@ int main (int argc, char *argv[]) {
 	if(bytesRead < 0) {
 		perror("error");
 	}
+
+	close(fd);
 
 	clientFinish();
 	exit(0);

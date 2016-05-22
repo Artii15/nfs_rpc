@@ -107,5 +107,6 @@ off_t lseek(int fd, off_t offset, int whence) {
 }
 
 int close(int fd) {
+	releaseDescriptor(fd);	
 	return 0;
 }
