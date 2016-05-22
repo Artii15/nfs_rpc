@@ -96,8 +96,19 @@ ssize_t write(int fd, const void *buf, size_t count) {
 		return -1;
 	}
 
-	struct FileAccessRequest request = {.offset = fileDescriptor->seekPos, .count = count, 
-			.fileAttributes = {.fileName = fileDescriptor->fileName, .flags = fileDescriptor->flags, .mode = fileDescriptor->mode}};
+	char sendingBuf[count];
+	memcpy(sendingBuf, buf, count);
+
+	struct WriteRequest request = {
+		.content = {.content_val = sendingBuf, .content_len = count}, 
+		.requestAttributes = {
+			.offset = fileDescriptor->seekPos, .count = count, .fileAttributes = {
+				.fileName = fileDescriptor->fileName, 
+				.flags = fileDescriptor->flags, 
+				.mode = fileDescriptor->mode
+			}
+		}
+	};
 
 	struct OperationStatus* response = rwrite_1(&request, clnt);
 	if(response == NULL) {

@@ -15,6 +15,11 @@ struct FileAccessRequest {
 	struct OpenRequest fileAttributes;
 };
 
+struct WriteRequest {
+	opaque content<>;
+	struct FileAccessRequest requestAttributes;
+};
+
 struct OperationStatus {
 	int returnValue;
 	int error;
@@ -30,6 +35,6 @@ program SIMPLE_NFS {
 		struct OperationStatus rOpen(struct OpenRequest) = 1;
 		struct OperationStatus rCreat(struct CreatRequest) = 2;
 		struct ReadResponse rRead(struct FileAccessRequest) = 3;
-		struct OperationStatus rWrite(struct FileAccessRequest) = 4;
+		struct OperationStatus rWrite(struct WriteRequest) = 4;
 	} = 1;
 } = 0x20000001;

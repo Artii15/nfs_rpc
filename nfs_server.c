@@ -78,7 +78,7 @@ void cleanReadBuffer() {
 	free(readResponse.content.content_val);
 }
 
-struct OperationStatus* rwrite_1_svc(struct FileAccessRequest *argp, struct svc_req *rqstp)
+struct OperationStatus* rwrite_1_svc(struct WriteRequest *argp, struct svc_req *rqstp)
 {
 	static struct OperationStatus  result;
 
