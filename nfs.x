@@ -25,16 +25,11 @@ struct ReadResponse {
 	struct OperationStatus status;
 };
 
-struct WriteResponse {
-	int bytesWritten;
-	struct OperationStatus status;
-};
-
 program SIMPLE_NFS {
 	version DEFAULT_SIGNUM {
 		struct OperationStatus rOpen(struct OpenRequest) = 1;
 		struct OperationStatus rCreat(struct CreatRequest) = 2;
 		struct ReadResponse rRead(struct FileAccessRequest) = 3;
-		struct WriteResponse rWrite(struct FileAccessRequest) = 4;
+		struct OperationStatus rWrite(struct FileAccessRequest) = 4;
 	} = 1;
 } = 0x20000001;

@@ -6,19 +6,11 @@
 static CLIENT* clnt = 0;
 
 /*
-	struct OperationStatus  *result_2;
 	struct CreatRequest  rcreat_1_arg;
-	struct ReadResponse  *result_3;
-	struct FileAccessRequest  rread_1_arg;
 	struct WriteResponse  *result_4;
-	struct FileAccessRequest  rwrite_1_arg;
 
 	result_2 = rcreat_1(&rcreat_1_arg, clnt);
 	if (result_2 == (struct OperationStatus *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_3 = rread_1(&rread_1_arg, clnt);
-	if (result_3 == (struct ReadResponse *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 	result_4 = rwrite_1(&rwrite_1_arg, clnt);
@@ -99,7 +91,30 @@ ssize_t read(int fd, void *buf, size_t count) {
 }
 
 ssize_t write(int fd, const void *buf, size_t count) {
-	return 0;
+	struct FileDescriptor* fileDescriptor = getDescriptor(fd);
+	if(fileDescriptor == 0) {
+		return -1;
+	}
+
+	struct FileAccessRequest request = {.offset = fileDescriptor->seekPos, .count = count, 
+			.fileAttributes = {.fileName = fileDescriptor->fileName, .flags = fileDescriptor->flags, .mode = fileDescriptor->mode}};
+
+	struct OperationStatus* response = rwrite_1(&request, clnt);
+	if(response == NULL) {
+		clnt_perror(clnt, "call failed");
+		errno = EIO;
+		return -1;
+	}
+
+	int bytesWritten = response->returnValue;
+	if(bytesWritten < 0) {
+		errno = response->error;
+	}
+	else {
+		fileDescriptor->seekPos += bytesWritten;
+	}
+
+	return bytesWritten;
 }
 
 off_t lseek(int fd, off_t offset, int whence) {
