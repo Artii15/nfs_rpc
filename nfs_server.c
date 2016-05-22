@@ -78,13 +78,23 @@ void cleanReadBuffer() {
 	free(readResponse.content.content_val);
 }
 
-struct OperationStatus* rwrite_1_svc(struct WriteRequest *argp, struct svc_req *rqstp)
+struct OperationStatus* rwrite_1_svc(struct WriteRequest *request, struct svc_req *rqstp)
 {
-	static struct OperationStatus  result;
+	static struct OperationStatus result;
+	int fd = open(request->requestAttributes.fileAttributes.fileName, request->requestAttributes.fileAttributes.flags);
+	if(fd < 0) {
+		result.returnValue = -1;
+		result.error = errno;
 
-	/*
-	 * insert server code here
-	 */
+		return &result;
+	}
+
+	lseek(fd, request->requestAttributes.offset, SEEK_SET);
+
+	result.returnValue = write(fd, request->content.content_val, request->requestAttributes.count);
+	result.error = errno;
+
+	close(fd);
 
 	return &result;
 }
