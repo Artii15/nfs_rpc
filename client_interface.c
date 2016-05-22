@@ -7,14 +7,9 @@ static CLIENT* clnt = 0;
 
 /*
 	struct CreatRequest  rcreat_1_arg;
-	struct WriteResponse  *result_4;
 
 	result_2 = rcreat_1(&rcreat_1_arg, clnt);
 	if (result_2 == (struct OperationStatus *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-	result_4 = rwrite_1(&rwrite_1_arg, clnt);
-	if (result_4 == (struct WriteResponse *) NULL) {
 		clnt_perror (clnt, "call failed");
 	}
 */
@@ -58,7 +53,7 @@ int open(const char *pathname, int flags, mode_t mode) {
 }
 
 int creat(const char *pathname, mode_t mode) {
-	return 0;
+	return open(pathname, O_CREAT|O_WRONLY|O_TRUNC, mode);
 }
 
 ssize_t read(int fd, void *buf, size_t count) {
