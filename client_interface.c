@@ -124,6 +124,10 @@ ssize_t write(int fd, const void *buf, size_t count) {
 }
 
 off_t lseek(int fd, off_t offset, int whence) {
+	struct FileDescriptor* fileDescriptor = getDescriptor(fd);
+	if(fileDescriptor == 0) {
+		return -1;
+	}
 	return 0;
 }
 

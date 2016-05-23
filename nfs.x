@@ -30,11 +30,18 @@ struct ReadResponse {
 	struct OperationStatus status;
 };
 
+struct LseekRequest {
+	struct OpenRequest fileAttributes;
+	int offset;
+	int whence;
+};
+
 program SIMPLE_NFS {
 	version DEFAULT_SIGNUM {
 		struct OperationStatus rOpen(struct OpenRequest) = 1;
 		struct OperationStatus rCreat(struct CreatRequest) = 2;
 		struct ReadResponse rRead(struct FileAccessRequest) = 3;
 		struct OperationStatus rWrite(struct WriteRequest) = 4;
+		struct OperationStatus rLseek(struct LseekRequest) = 4;
 	} = 1;
 } = 0x20000001;

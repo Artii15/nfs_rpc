@@ -76,6 +76,7 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 }
 
 void cleanReadBuffer() {
+	/* TODO: call this function somehow before exit */
 	free(readResponse.content.content_val);
 }
 
