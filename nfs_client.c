@@ -27,6 +27,13 @@ int main (int argc, char *argv[]) {
 
 	printf("%d %s\n", bytesRead, readBuf);
 
+	lseek(fd, -bytesRead, SEEK_CUR);
+
+	char readBuf2[100] = {0};
+	int bytesRead2 = read(fd, readBuf2, 99);
+
+	printf("%d %s\n", bytesRead2, readBuf2);
+
 	if(bytesRead < 0) {
 		perror("error");
 	}
