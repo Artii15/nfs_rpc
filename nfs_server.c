@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <signal.h>
 
 struct OperationStatus* ropen_1_svc(struct OpenRequest *request, struct svc_req *rqstp) {
 	static struct OperationStatus result;
@@ -37,7 +38,6 @@ struct OperationStatus * rlseek_1_svc(struct LseekRequest* request, struct svc_r
 	return &result;
 }
 
-void cleanReadBuffer();
 static short readBufferSize = 0;
 static struct ReadResponse readResponse = {.content = {.content_val = 0, .content_len = 0}, .status = {.returnValue = 0, .error = 0}};
 struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_req *rqstp) {
@@ -54,7 +54,6 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 	if(readBufferSize < request->count*sizeof(char)) {
 		if(readBufferSize == 0) {
 			readResponse.content.content_val = malloc(request->count*sizeof(char));
-			atexit(cleanReadBuffer);
 		}
 		else {
 			readResponse.content.content_val = realloc(readResponse.content.content_val, request->count*sizeof(char));
@@ -75,11 +74,6 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 	close(fd);
 
 	return &readResponse;
-}
-
-void cleanReadBuffer() {
-	/* TODO: call this function somehow before exit */
-	free(readResponse.content.content_val);
 }
 
 struct OperationStatus* rwrite_1_svc(struct WriteRequest *request, struct svc_req *rqstp) {
