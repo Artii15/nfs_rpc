@@ -5,8 +5,7 @@
 #include <unistd.h>
 #include <errno.h>
 
-struct OperationStatus* ropen_1_svc(struct OpenRequest *request, struct svc_req *rqstp)
-{
+struct OperationStatus* ropen_1_svc(struct OpenRequest *request, struct svc_req *rqstp) {
 	static struct OperationStatus result;
 	result.returnValue = open(request->fileName, request->flags, request->mode);
 
@@ -21,13 +20,21 @@ struct OperationStatus* ropen_1_svc(struct OpenRequest *request, struct svc_req 
 	return &result;
 }
 
-struct OperationStatus* rcreat_1_svc(struct CreatRequest *argp, struct svc_req *rqstp)
-{
-	static struct OperationStatus  result;
+struct OperationStatus * rlseek_1_svc(struct LseekRequest* request, struct svc_req *rqstp) {
+	static struct OperationStatus result;
+	int fd = open(request->fileAttributes.fileName, request->fileAttributes.flags);
+	if(fd < 0) {
+		result.returnValue = -1;
+		result.error = EBADF;
+		return &result;
+	}
 
-	/*
-	 * insert server code here
-	 */
+	/* TODO: handling lseek error */
+	lseek(fd, request->oldOffset, SEEK_SET);
+	result.returnValue = lseek(fd, request->newOffset, request->whence);
+	result.error = (result.returnValue < 0) ? errno : 0;
+
+	close(fd);
 
 	return &result;
 }
@@ -41,7 +48,7 @@ struct ReadResponse* rread_1_svc(struct FileAccessRequest *request, struct svc_r
 	if(fd < 0) {
 		readResponse.content.content_len = 0;
 		readResponse.status.returnValue = fd;
-		readResponse.status.error = errno;
+		readResponse.status.error = EBADF;
 
 		return &readResponse;
 	}
@@ -80,13 +87,12 @@ void cleanReadBuffer() {
 	free(readResponse.content.content_val);
 }
 
-struct OperationStatus* rwrite_1_svc(struct WriteRequest *request, struct svc_req *rqstp)
-{
+struct OperationStatus* rwrite_1_svc(struct WriteRequest *request, struct svc_req *rqstp) {
 	static struct OperationStatus result;
 	int fd = open(request->requestAttributes.fileAttributes.fileName, request->requestAttributes.fileAttributes.flags);
 	if(fd < 0) {
 		result.returnValue = -1;
-		result.error = errno;
+		result.error = EBADF;
 
 		return &result;
 	}

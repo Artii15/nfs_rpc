@@ -4,11 +4,6 @@ struct OpenRequest {
 	unsigned mode;
 };
 
-struct CreatRequest {
-	string fileName<>;
-	unsigned mode;
-};
-
 struct FileAccessRequest {
 	int offset; 
 	unsigned count;
@@ -32,16 +27,16 @@ struct ReadResponse {
 
 struct LseekRequest {
 	struct OpenRequest fileAttributes;
-	int offset;
+	int oldOffset;
+	int newOffset;
 	int whence;
 };
 
 program SIMPLE_NFS {
 	version DEFAULT_SIGNUM {
 		struct OperationStatus rOpen(struct OpenRequest) = 1;
-		struct OperationStatus rCreat(struct CreatRequest) = 2;
-		struct ReadResponse rRead(struct FileAccessRequest) = 3;
-		struct OperationStatus rWrite(struct WriteRequest) = 4;
+		struct ReadResponse rRead(struct FileAccessRequest) = 2;
+		struct OperationStatus rWrite(struct WriteRequest) = 3;
 		struct OperationStatus rLseek(struct LseekRequest) = 4;
 	} = 1;
 } = 0x20000001;

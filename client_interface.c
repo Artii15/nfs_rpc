@@ -5,15 +5,6 @@
 
 static CLIENT* clnt = 0;
 
-/*
-	struct CreatRequest  rcreat_1_arg;
-
-	result_2 = rcreat_1(&rcreat_1_arg, clnt);
-	if (result_2 == (struct OperationStatus *) NULL) {
-		clnt_perror (clnt, "call failed");
-	}
-*/
-
 void clientInit(char* hostname) {
 	clnt = clnt_create(hostname, SIMPLE_NFS, DEFAULT_SIGNUM, "udp");
 	if(clnt == 0) {
@@ -128,7 +119,32 @@ off_t lseek(int fd, off_t offset, int whence) {
 	if(fileDescriptor == 0) {
 		return -1;
 	}
-	return 0;
+
+	struct LseekRequest request = {
+		.newOffset = offset,
+		.oldOffset = fileDescriptor->seekPos,
+		.whence = whence,
+		.fileAttributes = {
+			.fileName = fileDescriptor->fileName,
+			.flags = fileDescriptor->flags,
+			.mode = fileDescriptor->mode
+		}
+	};
+
+	struct OperationStatus* response = rlseek_1(&request, clnt);
+	if(response == NULL) {
+		clnt_perror(clnt, "call failed");
+		errno = EIO;
+		return -1;
+	}
+	else if(response->returnValue == -1) {
+		errno = response->error;		
+		return -1;
+	}
+	else {
+		fileDescriptor->seekPos = response->returnValue;
+		return fileDescriptor->seekPos;
+	}
 }
 
 int close(int fd) {
