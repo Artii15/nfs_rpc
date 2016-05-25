@@ -12,7 +12,7 @@ int main (int argc, char *argv[]) {
 	char* serverName = argv[1];
 	clientInit(serverName);
 
-	int fd = open("test.txt", O_RDWR, 0);
+	int fd = open("test.txt", O_RDWR);
 	if(fd < 0) {
 		perror("Error");
 		exit(1);
