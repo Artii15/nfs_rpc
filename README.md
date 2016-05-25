@@ -1,13 +1,16 @@
 # Namiastka systemu NFS
 Kompilacja i uruchamnianie:
+
 `rpcgen nfs.x`
 
 `make -f Makefile.nfs`
 
 Uruchamianie serwera:
+
 `./nfs_server`
 
 Uruchamianie klienta:
+
 `./nfs_client adres_serwera`
 
 Plik nfs_client.c zawiera przykładowe wykorzystanie funkcji operujących na plikach znajdujących się na zdalnym serwerze.
