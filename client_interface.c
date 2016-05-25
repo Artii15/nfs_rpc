@@ -2,6 +2,7 @@
 #include "nfs.h"
 #include "descriptors.h"
 #include <errno.h>
+#include <stdarg.h>
 
 static CLIENT* clnt = 0;
 
@@ -17,11 +18,20 @@ void clientFinish() {
 	clnt_destroy(clnt);
 }
 
-int open(const char *pathname, int flags, mode_t mode) {
+int open(const char *pathname, int flags, ...) {
 	if(strnlen(pathname, MAX_FILENAME_LEN) >= MAX_FILENAME_LEN) {
 		errno = ENAMETOOLONG;	
 		return -1;
 	}
+
+	int mode = 0;
+	va_list ap;
+	va_start(ap, flags);
+	if(flags & O_CREAT) {
+		mode = va_arg(ap, int);	
+	}
+	va_end(ap);
+
 	char fileNameBuf[MAX_FILENAME_LEN];
 	strcpy(fileNameBuf, pathname);
 

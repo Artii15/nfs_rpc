@@ -1,5 +1,6 @@
 #include "client_interface.h"
 #include <stdlib.h>
+#include <string.h>
 #include <stdio.h>
 
 int main (int argc, char *argv[]) {
@@ -11,28 +12,30 @@ int main (int argc, char *argv[]) {
 	char* serverName = argv[1];
 	clientInit(serverName);
 
-	int fd = open("/home/artur/test.txt", O_RDWR, 0);
+	int fd = open("test.txt", O_RDWR, 0);
+	if(fd < 0) {
+		perror("Error");
+		exit(1);
+	}
 
 	char writeBuf[] = {'a', 'b', 'c'};
 	if(write(fd, writeBuf, 3) < 0) {
 		perror("Error");
 		close(fd);
-		exit(1);	
+		exit(1);
 	}
 
-	printf("%d\n", fd);
-
 	char readBuf[100] = {0};
-	int bytesRead = read(fd, readBuf, 99);
+	int bytesRead = read(fd, readBuf, sizeof(readBuf));
 
-	printf("%d %s\n", bytesRead, readBuf);
+	printf("[%dB] %s\n", bytesRead, readBuf);
 
 	lseek(fd, -bytesRead, SEEK_CUR);
 
-	char readBuf2[100] = {0};
-	int bytesRead2 = read(fd, readBuf2, 99);
+	memset(readBuf, 0, sizeof(readBuf));
+	bytesRead = read(fd, readBuf, sizeof(readBuf));
 
-	printf("%d %s\n", bytesRead2, readBuf2);
+	printf("[%dB] %s\n", bytesRead, readBuf);
 
 	if(bytesRead < 0) {
 		perror("error");

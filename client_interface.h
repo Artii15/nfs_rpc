@@ -5,7 +5,7 @@
 
 void clientInit(char* hostname);
 void clientFinish();
-int open(const char *pathname, int flags, mode_t mode);
+int open(const char *pathname, int flags, ...);
 int creat(const char *pathname, mode_t mode);
 ssize_t read(int fd, void *buf, size_t count);
 ssize_t write(int fd, const void *buf, size_t count);
